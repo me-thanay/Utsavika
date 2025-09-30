@@ -189,17 +189,24 @@ app.post("/orders", localAuthMiddleware, (req: AuthedRequest, res: Response) => 
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8787;
-// Serve frontend build (single-port setup)
+// Serve frontend build only if it exists (in case API is deployed separately)
 const clientDistPath = path.resolve(__dirname, "../../dist");
-app.use(express.static(clientDistPath));
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
 
-// Map known SPA routes to index.html
-const spaRoutes = ["/", "/shop", "/about", "/contact", "/cart", "/checkout", "/auth"];
-spaRoutes.forEach((route) => {
-  app.get(route, (_req: Request, res: Response) => {
-    res.sendFile(path.join(clientDistPath, "index.html"));
+  // Map known SPA routes to index.html
+  const spaRoutes = ["/", "/shop", "/about", "/contact", "/cart", "/checkout", "/auth"];
+  spaRoutes.forEach((route) => {
+    app.get(route, (_req: Request, res: Response) => {
+      res.sendFile(path.join(clientDistPath, "index.html"));
+    });
   });
-});
+} else {
+  // API-only deployment default root response
+  app.get("/", (_req: Request, res: Response) => {
+    res.status(200).json({ ok: true, service: "api" });
+  });
+}
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
