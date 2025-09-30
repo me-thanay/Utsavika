@@ -3,7 +3,6 @@ import path from "path";
 import fs from "fs";
 import cors from "cors";
 import morgan from "morgan";
-import { createClient, User } from "@supabase/supabase-js";
 import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -13,26 +12,20 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-const SUPABASE_URL = process.env.SUPABASE_URL as string | undefined;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY as string | undefined;
-const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-  : null;
+type AuthedUser = { id: number; email: string };
+type AuthedRequest = Request & { user?: AuthedUser };
 
-type AuthedRequest = Request & { user?: User };
-
-async function authMiddleware(req: AuthedRequest, res: Response, next: NextFunction) {
-  if (!supabase) {
-    return res.status(401).json({ error: "Auth not configured" });
-  }
+function localAuthMiddleware(req: AuthedRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
   if (!token) return res.status(401).json({ error: "Missing Bearer token" });
-
-  const { data, error } = await supabase.auth.getUser(token);
-  if (error || !data?.user) return res.status(401).json({ error: "Invalid token" });
-  req.user = data.user;
-  next();
+  try {
+    const payload = jwt.verify(token, JWT_SECRET) as { uid: number; email: string };
+    req.user = { id: payload.uid, email: payload.email };
+    next();
+  } catch {
+    return res.status(401).json({ error: "Invalid token" });
+  }
 }
 
 app.get("/health", (_req: Request, res: Response) => {
@@ -50,6 +43,37 @@ db.prepare(`create table if not exists users (
   password_hash text not null,
   full_name text,
   created_at text not null default (datetime('now'))
+)`).run();
+
+// Minimal order schema to support checkout
+db.prepare(`create table if not exists addresses (
+  id integer primary key autoincrement,
+  user_id integer not null,
+  line1 text not null,
+  line2 text,
+  city text not null,
+  state text,
+  postal_code text not null,
+  country text not null,
+  created_at text not null default (datetime('now'))
+)`).run();
+
+db.prepare(`create table if not exists orders (
+  id integer primary key autoincrement,
+  user_id integer not null,
+  total_amount real not null,
+  shipping_address_id integer,
+  status text not null default 'placed',
+  created_at text not null default (datetime('now'))
+)`).run();
+
+db.prepare(`create table if not exists order_items (
+  id integer primary key autoincrement,
+  order_id integer not null,
+  product_id text,
+  product_name text not null,
+  unit_price real not null,
+  quantity integer not null
 )`).run();
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
@@ -95,64 +119,33 @@ const localSignin = (req: Request, res: Response) => {
 app.post("/api/local/signin", localSignin);
 app.post("/local/signin", localSignin);
 
-// Create user without email confirmation using service role
-async function signupHandler(req: Request, res: Response) {
-  try {
-    const { email, password, full_name } = req.body as { email: string; password: string; full_name?: string };
-    if (!email || !password) return res.status(400).json({ error: "email and password are required" });
+// Legacy Supabase signup routes removed — local auth in use
 
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name },
-    });
-
-    if (error) {
-      const message = (error as any).message || String(error);
-      const lower = message.toLowerCase();
-      if (lower.includes("already") && lower.includes("registered")) {
-        return res.status(409).json({ error: "Email already registered" });
-      }
-      // eslint-disable-next-line no-console
-      console.error("/auth/signup failed:", message);
-      return res.status(500).json({ error: message });
-    }
-
-    return res.status(201).json({ user: { id: data.user?.id, email: data.user?.email } });
-  } catch (e: any) {
-    // eslint-disable-next-line no-console
-    console.error("/auth/signup exception:", e?.message || e);
-    return res.status(500).json({ error: e?.message || "Internal Server Error" });
-  }
-}
-
-app.post("/auth/signup", signupHandler);
-app.post("/api/auth/signup", signupHandler);
-
-app.get("/me", authMiddleware, async (req: AuthedRequest, res: Response) => {
+app.get("/me", localAuthMiddleware, (req: AuthedRequest, res: Response) => {
   const userId = req.user!.id;
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("id, email, full_name, created_at")
-    .eq("id", userId)
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(profile);
+  const row = db.prepare("select id, email, full_name, created_at from users where id = ?").get(userId) as
+    | { id: number; email: string; full_name: string | null; created_at: string }
+    | undefined;
+  if (!row) return res.status(404).json({ error: "User not found" });
+  res.json(row);
 });
 
-app.get("/orders", authMiddleware, async (req: AuthedRequest, res: Response) => {
+app.get("/orders", localAuthMiddleware, (req: AuthedRequest, res: Response) => {
   const userId = req.user!.id;
-  const { data, error } = await supabase
-    .from("orders")
-    .select("id, status, total_amount, created_at, shipping_address_id, order_items:order_items(id, product_id, product_name, unit_price, quantity)")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
+  const orders = db.prepare(
+    "select id, status, total_amount, created_at, shipping_address_id from orders where user_id = ? order by datetime(created_at) desc"
+  ).all(userId) as Array<{ id: number; status: string; total_amount: number; created_at: string; shipping_address_id: number | null }>;
+  const itemsStmt = db.prepare(
+    "select id, product_id, product_name, unit_price, quantity from order_items where order_id = ?"
+  );
+  const result = orders.map((o) => ({
+    ...o,
+    order_items: itemsStmt.all(o.id),
+  }));
+  res.json(result);
 });
 
-app.post("/orders", authMiddleware, async (req: AuthedRequest, res: Response) => {
+app.post("/orders", localAuthMiddleware, (req: AuthedRequest, res: Response) => {
   const userId = req.user!.id;
   const { items, shippingAddress } = req.body as {
     items: Array<{ product_id?: string; product_name: string; unit_price: number; quantity: number }>;
@@ -163,38 +156,36 @@ app.post("/orders", authMiddleware, async (req: AuthedRequest, res: Response) =>
     return res.status(400).json({ error: "Order items required" });
   }
 
-  let shippingAddressId: string | undefined;
+  let shippingAddressId: number | null = null;
   if (shippingAddress) {
-    const { data: addr, error: addrErr } = await supabase
-      .from("addresses")
-      .insert({ user_id: userId, ...shippingAddress })
-      .select("id")
-      .single();
-    if (addrErr) return res.status(500).json({ error: addrErr.message });
-    shippingAddressId = addr.id;
+    const info = db
+      .prepare(
+        "insert into addresses (user_id, line1, line2, city, state, postal_code, country) values (?, ?, ?, ?, ?, ?, ?)"
+      )
+      .run(
+        userId,
+        shippingAddress.line1,
+        shippingAddress.line2 || null,
+        shippingAddress.city,
+        shippingAddress.state || null,
+        shippingAddress.postal_code,
+        shippingAddress.country
+      );
+    shippingAddressId = Number(info.lastInsertRowid);
   }
 
   const total = items.reduce((sum, it) => sum + Number(it.unit_price) * Number(it.quantity), 0);
+  const orderInfo = db
+    .prepare("insert into orders (user_id, total_amount, shipping_address_id) values (?, ?, ?)")
+    .run(userId, total, shippingAddressId);
+  const orderId = Number(orderInfo.lastInsertRowid);
 
-  const { data: order, error: orderErr } = await supabase
-    .from("orders")
-    .insert({ user_id: userId, total_amount: total, shipping_address_id: shippingAddressId })
-    .select("id")
-    .single();
-  if (orderErr) return res.status(500).json({ error: orderErr.message });
+  const insertItem = db.prepare(
+    "insert into order_items (order_id, product_id, product_name, unit_price, quantity) values (?, ?, ?, ?, ?)"
+  );
+  items.forEach((it) => insertItem.run(orderId, it.product_id || null, it.product_name, it.unit_price, it.quantity));
 
-  const rows = items.map(it => ({
-    order_id: order.id,
-    product_id: it.product_id,
-    product_name: it.product_name,
-    unit_price: it.unit_price,
-    quantity: it.quantity,
-  }));
-
-  const { error: itemsErr } = await supabase.from("order_items").insert(rows);
-  if (itemsErr) return res.status(500).json({ error: itemsErr.message });
-
-  res.status(201).json({ id: order.id, total_amount: total });
+  res.status(201).json({ id: orderId, total_amount: total });
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8787;
