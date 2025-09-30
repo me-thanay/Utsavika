@@ -80,8 +80,8 @@ const Auth = () => {
         return;
       }
 
-      // If user not found, auto-signup then login
-      if (resp.status === 401 || (body?.error && String(body.error).toLowerCase().includes("invalid"))) {
+      // If user not found (404), auto-signup then login
+      if (resp.status === 404) {
         const sResp = await fetch("/api/local/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
