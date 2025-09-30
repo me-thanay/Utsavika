@@ -8,6 +8,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
+const API_BASES = ["/api", "https://utsavika-api.onrender.com/api"]; // fallback if Vercel rewrite fails
+
+async function postJson<T>(path: string, body: unknown): Promise<{ ok: boolean; status: number; json: T | any }> {
+  for (const base of API_BASES) {
+    try {
+      const resp = await fetch(`${base}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      // If 404/502 etc, try next base
+      if (!resp.ok && (resp.status === 404 || resp.status === 502 || resp.status === 500)) {
+        if (base !== API_BASES[API_BASES.length - 1]) {
+          continue;
+        }
+      }
+      const json = await resp.json().catch(() => ({}));
+      return { ok: resp.ok, status: resp.status, json };
+    } catch {
+      // network error - try next base
+      continue;
+    }
+  }
+  return { ok: false, status: 0, json: { error: "Network error" } };
+}
+
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,35 +54,24 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // 1) Create confirmed user via backend (avoids email confirmation flow)
-      const resp = await fetch("/api/local/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, full_name: fullName }),
+      const { ok, status, json } = await postJson<{ token: string }>("/local/signup", {
+        email,
+        password,
+        full_name: fullName,
       });
-      if (!resp.ok) {
-        const body = await resp.json().catch(() => ({}));
+      if (!ok) {
         toast({
           variant: "destructive",
           title: "Sign up failed",
-          description: body?.error || `Server error (${resp.status})`,
+          description: json?.error || `Server error (${status || "network"})`,
         });
         return;
       }
-      const signupData = await resp.json();
-      setSession(signupData.token, email);
-
-      toast({
-        title: "Welcome!",
-        description: "Your account has been created and you are now signed in.",
-      });
+      setSession(json.token, email);
+      toast({ title: "Welcome!", description: "Your account has been created and you are now signed in." });
       navigate("/");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-      });
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -67,29 +82,23 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const resp = await fetch("/api/local/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const body = await resp.json().catch(() => ({}));
-      if (resp.ok) {
-        setSession(body.token, email);
+      const result = await postJson<{ token: string }>("/local/signin", { email, password });
+      if (result.ok) {
+        setSession(result.json.token, email);
         toast({ title: "Welcome back!", description: "Successfully signed in." });
         navigate("/");
         return;
       }
 
       // If user not found (404), auto-signup then login
-      if (resp.status === 404) {
-        const sResp = await fetch("/api/local/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, full_name: fullName || email.split("@")[0] }),
+      if (result.status === 404) {
+        const sResp = await postJson<{ token: string }>("/local/signup", {
+          email,
+          password,
+          full_name: fullName || email.split("@")[0],
         });
-        const sBody = await sResp.json().catch(() => ({}));
         if (sResp.ok) {
-          setSession(sBody.token, email);
+          setSession(sResp.json.token, email);
           toast({ title: "Account created", description: "You are now signed in." });
           navigate("/");
           return;
@@ -99,14 +108,10 @@ const Auth = () => {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: body?.error || `Server error (${resp.status})`,
+        description: result.json?.error || `Server error (${result.status || "network"})`,
       });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-      });
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }
