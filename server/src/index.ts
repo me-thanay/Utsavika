@@ -141,6 +141,25 @@ const localSignin = (req: Request, res: Response) => {
 app.post("/api/local/signin", localSignin);
 app.post("/local/signin", localSignin);
 
+// Simple password reset without email verification (admin-less). For demo only.
+app.post("/api/local/reset-password", (req: Request, res: Response) => {
+  const { email, new_password } = req.body as { email?: string; new_password?: string };
+  if (!email || !new_password || new_password.length < 6) {
+    return res.status(400).json({ error: "email and new_password (min 6) required" });
+  }
+  try {
+    const user = db.prepare("select id from users where email = ?").get(email) as { id: number } | undefined;
+    if (!user) return res.status(404).json({ error: "User not found" });
+    const passwordHash = bcrypt.hashSync(new_password, 10);
+    db.prepare("update users set password_hash = ? where id = ?").run(passwordHash, user.id);
+    return res.json({ ok: true });
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.error("/api/local/reset-password error:", e?.message || e);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Legacy Supabase signup routes removed — local auth in use
 
 app.get("/me", localAuthMiddleware, (req: AuthedRequest, res: Response) => {
