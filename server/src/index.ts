@@ -8,7 +8,29 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const app = express();
-app.use(cors());
+
+// Explicit CORS to allow production domains and preflight
+const allowedOrigins = new Set<string>([
+  "https://www.utsavika.shop",
+  "https://utsavika.shop",
+  "http://localhost:5173",
+]);
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow non-browser/SSR
+    if (allowedOrigins.has(origin)) return callback(null, true);
+    // Default to allow to avoid accidental blocks during propagation
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 app.use(morgan("dev"));
 
