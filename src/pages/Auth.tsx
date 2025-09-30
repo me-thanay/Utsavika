@@ -15,18 +15,13 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setSession } = useAuth();
+  const { setSession, token } = useAuth();
 
   useEffect(() => {
-    // Check if user is already logged in
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/");
-      }
-    };
-    checkAuth();
-  }, [navigate]);
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
