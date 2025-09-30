@@ -52,7 +52,12 @@ const ExpandableChat: React.FC<ExpandableChatProps> = ({
 
   return (
     <div
-      className={cn(`fixed ${chatConfig.positions[position]} z-50`, className)}
+      className={cn(
+        `fixed ${chatConfig.positions[position]} z-50`,
+        // Prevent this wrapper from blocking taps when chat is closed on mobile
+        isOpen ? "pointer-events-auto" : "pointer-events-none",
+        className,
+      )}
       {...props}
     >
       <div
@@ -80,6 +85,7 @@ const ExpandableChat: React.FC<ExpandableChatProps> = ({
         icon={icon}
         isOpen={isOpen}
         toggleChat={toggleChat}
+        className="pointer-events-auto"
       />
     </div>
   );
