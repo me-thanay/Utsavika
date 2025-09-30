@@ -8,7 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
-const API_BASES = ["/api", "https://utsavika-api.onrender.com/api"]; // fallback if Vercel rewrite fails
+const API_BASES = [
+  "https://utsavika-api.onrender.com/api", // Render primary URL
+  "https://api.utsavika.shop/api",         // Custom domain (if DNS is ready)
+  "/api",                                   // Vercel rewrite (fallback)
+];
 
 async function postJson<T>(path: string, body: unknown): Promise<{ ok: boolean; status: number; json: T | any }> {
   for (const base of API_BASES) {
@@ -18,7 +22,6 @@ async function postJson<T>(path: string, body: unknown): Promise<{ ok: boolean; 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      // If 404/502 etc, try next base
       if (!resp.ok && (resp.status === 404 || resp.status === 502 || resp.status === 500)) {
         if (base !== API_BASES[API_BASES.length - 1]) {
           continue;
@@ -27,7 +30,6 @@ async function postJson<T>(path: string, body: unknown): Promise<{ ok: boolean; 
       const json = await resp.json().catch(() => ({}));
       return { ok: resp.ok, status: resp.status, json };
     } catch {
-      // network error - try next base
       continue;
     }
   }
@@ -90,7 +92,6 @@ const Auth = () => {
         return;
       }
 
-      // If user not found (404), auto-signup then login
       if (result.status === 404) {
         const sResp = await postJson<{ token: string }>("/local/signup", {
           email,
