@@ -104,7 +104,7 @@ const localSignin = (req: Request, res: Response) => {
   if (!email || !password) return res.status(400).json({ error: "email and password are required" });
   try {
     const row = db.prepare("select id, password_hash, full_name from users where email = ?").get(email) as { id: number; password_hash: string; full_name: string } | undefined;
-    if (!row) return res.status(401).json({ error: "Invalid credentials" });
+    if (!row) return res.status(404).json({ error: "User not found" });
     const ok = bcrypt.compareSync(password, row.password_hash);
     if (!ok) return res.status(401).json({ error: "Invalid credentials" });
     const token = jwt.sign({ uid: row.id, email }, JWT_SECRET, { expiresIn: "7d" });
