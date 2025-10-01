@@ -138,6 +138,30 @@ const Checkout = () => {
     // Generate printable invoice
     generateInvoiceAndDownload();
 
+    // Fire-and-forget server notification (email + excel)
+    try {
+      const orderId = `UTS-${Date.now()}`;
+      const placedAt = new Date().toISOString();
+      fetch(import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/notify-order` : "/notify-order", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          placedAt,
+          customer: {
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            pincode: formData.pincode,
+            landmark: formData.landmark,
+          },
+          items: cartItems.map(ci => ({ name: ci.name, price: ci.price, quantity: ci.quantity })),
+          totals: { totalAmount, itemCount: totalItems },
+        })
+      }).catch(() => {});
+    } catch {}
+
     // Clear cart after successful order
     clearCart();
     

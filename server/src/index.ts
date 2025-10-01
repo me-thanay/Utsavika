@@ -6,6 +6,8 @@ import morgan from "morgan";
 import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import * as XLSX from "xlsx";
 
 const app = express();
 
@@ -255,3 +257,116 @@ app.listen(port, () => {
 });
 
 
+
+// --- Order notification (email + Excel attachment) ---
+// This route does not require auth because the storefront checkout is public.
+// Configure SMTP via env vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, ORDER_NOTIFY_TO
+app.post("/notify-order", async (req: Request, res: Response) => {
+  try {
+    const {
+      customer,
+      items,
+      totals,
+      orderId,
+      placedAt,
+    } = req.body as {
+      customer: { fullName: string; email: string; phone: string; address: string; pincode: string; landmark?: string };
+      items: Array<{ name: string; price: number; quantity: number }>;
+      totals: { totalAmount: number; itemCount: number };
+      orderId: string;
+      placedAt: string;
+    };
+
+    if (!customer || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Invalid payload" });
+    }
+
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    const notifyTo = process.env.ORDER_NOTIFY_TO || "thanayp99@gmail.com";
+
+    // Build Excel workbook in-memory
+    const orderRows = items.map((it, idx) => ({
+      SNo: idx + 1,
+      Item: it.name,
+      Quantity: it.quantity,
+      UnitPrice: it.price,
+      LineTotal: it.price * it.quantity,
+    }));
+    const wb = XLSX.utils.book_new();
+    const wsOrder = XLSX.utils.json_to_sheet(orderRows);
+    XLSX.utils.book_append_sheet(wb, wsOrder, "Items");
+
+    const summaryRows = [
+      { Field: "Order ID", Value: orderId },
+      { Field: "Placed At", Value: placedAt },
+      { Field: "Customer Name", Value: customer.fullName },
+      { Field: "Email", Value: customer.email },
+      { Field: "Phone", Value: customer.phone },
+      { Field: "Address", Value: customer.address },
+      { Field: "PIN Code", Value: customer.pincode },
+      { Field: "Landmark", Value: customer.landmark || "" },
+      { Field: "Items", Value: String(totals?.itemCount ?? items.length) },
+      { Field: "Grand Total", Value: totals?.totalAmount ?? orderRows.reduce((s, r) => s + Number(r.LineTotal), 0) },
+    ];
+    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+    XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+    const excelBuffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as unknown as Buffer;
+
+    let sentInfo: any = null;
+    if (smtpHost && smtpPort && smtpUser && smtpPass) {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: { user: smtpUser, pass: smtpPass },
+      });
+
+      sentInfo = await transporter.sendMail({
+        from: `Utsavika Orders <${smtpUser}>`,
+        to: notifyTo,
+        subject: `New Order ${orderId} - ${customer.fullName}`,
+        text: `Order ID: ${orderId}\nPlaced: ${placedAt}\nCustomer: ${customer.fullName}\nEmail: ${customer.email}\nPhone: ${customer.phone}\nAddress: ${customer.address}\nPIN: ${customer.pincode}\nLandmark: ${customer.landmark || ""}\nItems: ${items
+          .map((i) => `${i.name} x${i.quantity} = ₹${i.price * i.quantity}`)
+          .join(", ")}\nTotal: ₹${totals?.totalAmount}`,
+        html: `
+          <h2>New Order ${orderId}</h2>
+          <p><strong>Placed:</strong> ${placedAt}</p>
+          <h3>Customer</h3>
+          <p>
+            ${customer.fullName}<br/>
+            ${customer.email} | ${customer.phone}<br/>
+            ${customer.address}, ${customer.pincode}<br/>
+            ${customer.landmark || ""}
+          </p>
+          <h3>Items</h3>
+          <ul>
+            ${items
+              .map(
+                (i) => `<li>${i.name} &times; ${i.quantity} = <strong>₹${i.price * i.quantity}</strong></li>`
+              )
+              .join("")}
+          </ul>
+          <p><strong>Total:</strong> ₹${totals?.totalAmount}</p>
+        `,
+        attachments: [
+          {
+            filename: `order-${orderId}.xlsx`,
+            content: excelBuffer,
+          },
+        ],
+      });
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn("SMTP not configured - skipping email send. Configure SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS.");
+    }
+
+    return res.json({ ok: true, emailed: Boolean(sentInfo) });
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.error("/notify-order error:", e?.message || e);
+    return res.status(500).json({ error: "Failed to notify order" });
+  }
+});
