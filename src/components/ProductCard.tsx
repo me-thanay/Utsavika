@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Product, useCart } from '@/contexts/CartContext';
@@ -13,6 +13,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const shouldShowToggle = useMemo(() => {
+    // Show read more if description is fairly long
+    return (product.description?.length || 0) > 140;
+  }, [product.description]);
 
   const handleAddToCart = () => {
     if (!user) {
@@ -36,9 +42,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <h3 className="font-playfair font-semibold text-lg text-foreground mb-2">
           {product.name}
         </h3>
-        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+        <p className={`text-muted-foreground text-sm ${shouldShowToggle ? 'mb-1' : 'mb-3'} ${isExpanded ? '' : 'line-clamp-2'}`}>
           {product.description}
         </p>
+        {shouldShowToggle && (
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="text-primary hover:underline text-xs font-medium mb-3"
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? 'Collapse description' : 'Expand description'}
+          >
+            {isExpanded ? 'Read less' : 'Read more'}
+          </button>
+        )}
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-primary">
             ₹{product.price}
