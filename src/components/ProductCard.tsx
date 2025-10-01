@@ -16,8 +16,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const shouldShowToggle = useMemo(() => {
-    // Show read more if description is reasonably long
-    return (product.description?.length || 0) > 80;
+    // Always show toggle if there is any description text
+    return (product.description?.length || 0) > 0;
   }, [product.description]);
 
   const handleAddToCart = () => {
