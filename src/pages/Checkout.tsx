@@ -135,14 +135,20 @@ const Checkout = () => {
       description: `Order confirmation will be sent to ${formData.email}`,
     });
 
-    // Generate printable invoice
-    generateInvoiceAndDownload();
+    // Offer printable invoice only if the user wants it
+    try {
+      const wantsInvoice = window.confirm('Do you want to download/print the invoice now?');
+      if (wantsInvoice) {
+        generateInvoiceAndDownload();
+      }
+    } catch {}
 
     // Fire-and-forget server notification (email + excel)
     try {
       const orderId = `UTS-${Date.now()}`;
       const placedAt = new Date().toISOString();
-      fetch(import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/notify-order` : "/notify-order", {
+      const endpoint = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/notify-order` : "/notify-order";
+      const resp = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -159,8 +165,17 @@ const Checkout = () => {
           items: cartItems.map(ci => ({ name: ci.name, price: ci.price, quantity: ci.quantity })),
           totals: { totalAmount, itemCount: totalItems },
         })
-      }).catch(() => {});
-    } catch {}
+      });
+      if (!resp.ok) {
+        // eslint-disable-next-line no-console
+        console.error('notify-order failed', resp.status);
+        toast({ title: 'Order placed, but email failed', description: 'We could not send an email notification.', variant: 'destructive' });
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('notify-order error', e);
+      toast({ title: 'Order placed, but email failed', description: 'Please verify your email settings.', variant: 'destructive' });
+    }
 
     // Clear cart after successful order
     clearCart();
