@@ -16,8 +16,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const shouldShowToggle = useMemo(() => {
-    // Show read more if description is fairly long
-    return (product.description?.length || 0) > 140;
+    // Show read more if description is reasonably long
+    return (product.description?.length || 0) > 80;
   }, [product.description]);
 
   const handleAddToCart = () => {
@@ -49,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="text-primary hover:underline text-xs font-medium mb-3"
+            className="text-primary hover:underline text-sm font-medium mt-1 mb-3 inline-flex"
             aria-expanded={isExpanded}
             aria-label={isExpanded ? 'Collapse description' : 'Expand description'}
           >
