@@ -41,7 +41,7 @@ import brochure13 from '@/assets/brochure13.jpg';
 import brochure14 from '@/assets/brochure14.jpg';
 import brochure15 from '@/assets/brochure15.jpg';
 import brochure16 from '@/assets/brochure16.jpg';
-import addon1Image from '@/assets/addon1-new.jpg';
+import addon1Image from '@/assets/1000rs-product.jpg';
 export const products: Product[] = [
   // Candles - Updated with exact brochure data
   {
