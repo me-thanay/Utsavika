@@ -75,6 +75,7 @@ export const products: Product[] = [
     id: '4',
     name: 'Peony Flower Candle Set of 1 | 100% Soy Wax | Rose Scented',
     price: 119,
+    originalPrice: 200,
     image: can5,
     description: 'A charming Small Blue Peony Flower Candle, crafted in the shape of a delicate peony bloom. Its soft blue hue and detailed petal design make it a perfect accent piece for home décor, party decorations, or gifting. Ideal for adding a touch of elegance and calm ambience. Usually 100g. Around 8–12 hours. Beautiful peony flower design in soft blue color. Burn time: up to 10 hours. Made with high-quality wax for smooth burn. Perfect for table decor, events, or as a gift piece. Fragrance: Kesari or customized.',
     category: 'candles'
@@ -91,6 +92,7 @@ export const products: Product[] = [
     id: '6',
     name: 'Daisy Floating Candle, White and Yellow, Floral Design, Decorative- Relaxing, Soothing, Pack of 1',
     price: 89,
+    originalPrice: 200,
     image: can7,
     description: 'A beautifully handcrafted Daisy Flower Candle featuring bright yellow petals and a classic white round center. Its cheerful design brings a touch of freshness and charm, making it perfect for table décor, parties, or gifting. 70g–100g. 8–12 hours (depending on wax type). Yellow & White Daisy Flower Candle. Lovely daisy flower design with yellow petals and white center. Burn time: up to 10 hours. Made with premium wax for clean burning. Ideal for home décor, garden parties, or as a thoughtful gift. Fragrance: Jasmine.',
     category: 'candles'
@@ -123,6 +125,7 @@ export const products: Product[] = [
     id: '10',
     name: 'Handcrafted Peony Flower Scented Candle in Glass',
     price: 169,
+    originalPrice: 300,
     image: can11,
     description: 'A beautifully designed Small Glass Candle with Rose Flower Top, combining the elegance of a clear glass jar with the charm of a detailed rose-shaped wax top. Perfect as a decorative piece, gift, or centerpiece for romantic evenings, weddings, or festivals. 100g–120g. 12–15 hours. Elegant glass jar with beautifully crafted rose flower top. Burn time: up to 15 hours. Premium wax blend for smooth, clean burning. Perfect for home décor, festivals, or gifting. Fragrance: Rose.',
     category: 'candles'
@@ -131,6 +134,7 @@ export const products: Product[] = [
     id: '11',
     name: 'Handcrafted egg shape Scented Candle',
     price: 249,
+    originalPrice: 600,
     image: can12,
     description: 'A beautiful set of 6 pastel-colored egg-shaped candles, perfect for gifting, home décor, or festive celebrations. Each candle is crafted with smooth wax finish and comes in soft shades of yellow, pink, lavender, green, peach, and lilac. Unique egg design – stylish and modern. Pastel shades for an elegant look. Smokeless, clean-burning wax. Perfect for décor, gifting, or parties. 📦 Pack: 6 candles (assorted colors). Fragrance: Jasmine.',
     category: 'candles'
@@ -139,6 +143,7 @@ export const products: Product[] = [
     id: '12',
     name: 'Hearts in Jar Candle',
     price: 139,
+    originalPrice: 300,
     image: can13,
     description: 'Elegant Glass Jar Candle with Love Symbol Top Decoration, designed to express warmth and affection. The candle sits in a clear glass jar, topped with a beautifully crafted "Love" symbol, making it a perfect choice for romantic occasions, anniversaries, Valentine\'s Day, or gifting. Its soft glow and premium fragrance create a cozy and heartfelt atmosphere. 150g–180g (including glass + wax). 20–25 hours. Glass Jar Candle with Love Symbol Top (180g). Stylish jar candle with romantic "Love" top decoration. Burn time: up to 25 hours. Made with premium wax for smooth, even burn. Perfect for gifting, Valentine\'s Day, weddings & anniversaries. Fragrance: Rose.',
     category: 'candles'
@@ -147,6 +152,7 @@ export const products: Product[] = [
     id: '13',
     name: 'Hearts in Jar Candle, Pack of 3',
     price: 549,
+    originalPrice: 800,
     image: can14,
     description: 'A romantic Set of 3 Glass Jar Candles with Love Symbol Top Decoration, crafted to spread warmth and affection. Each jar is filled with premium wax and topped with a stylish "Love" symbol, making them an elegant choice for décor and gifting. Perfect for anniversaries, weddings, Valentine\'s Day, or as a thoughtful gift set. 150g–180g each. 450g–540g total. 20–25 hours each. 60–75 hours total. Glass Jar Candle Combo – Set of 3 with Love Symbol Top (180g each). Elegant glass candles with romantic "Love" decoration. Burn time: up to 25 hours each. Total burn time: 75 hours (set of 3). Ideal for weddings, anniversaries, Valentine\'s Day & gifting. Fragrance: Jasmine.',
     category: 'candles'
@@ -155,6 +161,7 @@ export const products: Product[] = [
     id: '14',
     name: 'Tealight Candles, Set of 10, Floral Bunch Scented (Butterfly, 10)',
     price: 189,
+    originalPrice: 300,
     image: can15,
     description: 'Set of 10pcs. Tealight Candles beautifully crafted butterflies. These eco-friendly candles blend the earthy charm of glass holders with the elegance design. Perfect for Diwali, weddings, pooja décor, festive celebrations, or gifting. 20g – 25g each 3 – 4 hours per candle. Burn time: up to 4 hours each Handmade with premium wax blend Ideal for Diwali, festivals, weddings & décor.',
     category: 'candles'
@@ -163,6 +170,7 @@ export const products: Product[] = [
     id: '15',
     name: 'Tealight Candles, Set of 8, Heart shape Bunch Scented (heart, 8)',
     price: 229,
+    originalPrice: 600,
     image: can16,
     description: 'Set of 8pcs. Tealight Candles beautifully crafted Hearts. These eco-friendly candles blend the earthy charm of glass holders with the elegance design. Perfect for Diwali, weddings, pooja décor, festive celebrations, or gifting. 20g – 25g each. 3 – 4 hours per candle. Burn time: up to 4 hours each Handmade with premium wax blend Ideal for Diwali, festivals, weddings & décor.',
     category: 'candles'
@@ -171,6 +179,7 @@ export const products: Product[] = [
     id: '16',
     name: 'Tealight Candles, Set of 12, Floral Bunch Scented (Round, 12)',
     price: 189,
+    originalPrice: 500,
     image: can17,
     description: 'Set of 8pcs. A charming collection of Tealight Candles in assorted shapes — round, star, heart, and square — each beautifully decorated with a delicate flower on top. These mini candles combine the simplicity of tealights with the elegance of floral design, making them perfect for parties, festivals, weddings, pooja décor, or gifting. 15g – 20g each 3 – 4 hours per candle. Tealight Candle Set with Small Flower Top – Round, Star, Heart & Square Shapes Decorative tealight candles with mini flower design Burn time: up to 4 hours each Available in round, star, heart & square shapes Perfect for festive décor, weddings, pooja & gifting.',
     category: 'candles'
@@ -179,6 +188,7 @@ export const products: Product[] = [
     id: '17',
     name: 'Tealight Candles, Set of 6, Floral Bunch Scented',
     price: 149,
+    originalPrice: 300,
     image: can18,
     description: 'Set of 6pcs. Traditional Clay Tealight Candles beautifully decorated with a small flower on the top. These eco-friendly candles blend the earthy charm of handmade clay holders with the elegance of floral design. Perfect for Diwali, weddings, pooja décor, festive celebrations, or gifting. 20g – 25g each (including clay + wax) 3 – 4 hours per candle. Clay Tealight Candle with Small Flower Top Decoration. Eco-friendly clay tealight with floral design Burn time: up to 4 hours each Handmade with premium wax blend Ideal for Diwali, festivals, weddings & décor',
     category: 'candles'
@@ -187,6 +197,7 @@ export const products: Product[] = [
     id: '18',
     name: 'Beautyful Lotus uril Candle with sunflower shape',
     price: 239,
+    originalPrice: 600,
     image: can19,
     description: 'Brighten up your space with these beautiful handmade sunflower tealight candles. Each candle features a realistic sunflower design with yellow petals and a brown center, set in a white wax base. Perfect for home décor, gifting, festivals, or special occasions. Handmade with premium-quality wax Unique sunflower design for an elegant look Clean and smokeless burn Ideal for festivals, parties, and décor.',
     category: 'candles'
@@ -195,6 +206,7 @@ export const products: Product[] = [
     id: '19',
     name: 'Round tealight candles',
     price: 249,
+    originalPrice: 700,
     image: brochure7,
     description: 'Set of 10pcs. A charming collection of Tealight Candles in assorted shapes — round, star, heart, and square — each beautifully decorated with a delicate flower on top. These mini candles combine the simplicity of tealights with the elegance of floral design, making them perfect for parties, festivals, weddings, pooja décor, or gifting. 15g – 20g each 3 – 4 hours per candle. Tealight Candle Set with Small Flower Top – Round, Star, Heart & Square Shapes. Decorative tealight candles with mini flower design. Burn time: up to 4 hours each Available in round, star, heart & square shapes Perfect for festive décor, weddings, pooja & gifting.',
     category: 'candles'
@@ -203,6 +215,7 @@ export const products: Product[] = [
     id: '20',
     name: 'Lavender Scented Glass Jar Candle',
     price: 229,
+    originalPrice: 500,
     image: can2,
     description: 'A soothing lavender-scented candle in a clear glass jar, beautifully colored in calming purple. Infused with natural lavender fragrance, it creates a relaxing atmosphere, perfect for stress relief, meditation, or home décor. Jar like this usually holds 150g – 200g wax. Relaxing lavender fragranceMade with premium wax blend Burn time: up to 300 hours Perfect for gifting, home décor, or relaxation.',
     category: 'candles'
@@ -241,6 +254,7 @@ export const products: Product[] = [
     id: '36',
     name: 'Golden Luxury Delight',
     price: 65,
+    
     image: choco3Image,
     description: 'The ultimate indulgence — a crisp chocolate shell embracing a luscious core of almond paste, roasted cashew bits, and a whole date hidden inside. Wrapped in golden luxury, each bite reveals layers of crunch, cream, and sweetness — a true celebration of taste and texture.',
     category: 'chocolates',
@@ -260,6 +274,7 @@ export const products: Product[] = [
     id: '29',
     name: 'Personalized Photo Candles',
     price: 899,
+    originalPrice: 1000,
     image: personalizedcandles,
     description: 'Custom-made candles featuring your favorite photos and personal messages. Handcrafted with love, perfect for creating unique, meaningful gifts for special people.',
     category: 'customized'
@@ -268,6 +283,7 @@ export const products: Product[] = [
     id: '30',
     name: 'Engraved Name Chocolate Box',
     price: 1199,
+    originalPrice: 1400,
     image: designedchocolates,
     description: 'Premium chocolate box with custom laser engraving of names and special messages. Luxurious presentation perfect for corporate gifting and special occasions.',
     category: 'customized'
@@ -276,6 +292,7 @@ export const products: Product[] = [
     id: '31',
     name: 'Custom Festival Hamper',
     price: 2999,
+    originalPrice: 4000,
     image: festivalhamper,
     description: 'Completely customizable luxury hamper with your choice of premium items and personalized packaging. Tailored to your preferences for the perfect celebration.',
     category: 'customized'
@@ -284,6 +301,7 @@ export const products: Product[] = [
     id: '32',
     name: 'Monogrammed Gift Set',
     price: 1699,
+    originalPrice: 2000,
     image: customizedImage,
     description: 'Elegant gift set with custom monogrammed items including premium candles, artisan chocolates, and luxury accessories. Sophisticated presentation for discerning recipients.',
     category: 'customized'
