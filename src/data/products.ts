@@ -305,6 +305,15 @@ export const products: Product[] = [
     image: customizedImage,
     description: 'Elegant gift set with custom monogrammed items including premium candles, artisan chocolates, and luxury accessories. Sophisticated presentation for discerning recipients.',
     category: 'customized'
+  },
+  {
+    id: '33',
+    name: 'Festive Celebration Gift Box',
+    price: 1000,
+    originalPrice: 2000,
+    image: hampersImage,
+    description: 'A festive 1kg gift box with 10 rich dry fruit chocolates, 3 elegant daisy flower candles, and 1 beautiful peony flower candle — perfect for gifting and celebrations. ✨',
+    category: 'hampers'
   }
 ];
 

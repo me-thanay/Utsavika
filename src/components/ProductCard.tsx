@@ -57,9 +57,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </button>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary">
-            ₹{product.price}
-          </span>
+          <div className="flex flex-col">
+            {product.originalPrice && (
+              <span className="text-sm text-muted-foreground line-through">
+                ₹{product.originalPrice.toLocaleString()}
+              </span>
+            )}
+            <span className="text-2xl font-bold text-primary">
+              ₹{product.price.toLocaleString()}
+            </span>
+          </div>
         </div>
       </CardContent>
       

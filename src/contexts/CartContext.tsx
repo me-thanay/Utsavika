@@ -5,6 +5,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  originalPrice?: number;
   image: string;
   description: string;
   category: 'candles' | 'chocolates' | 'hampers' | 'customized';
