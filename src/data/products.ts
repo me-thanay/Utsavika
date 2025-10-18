@@ -243,30 +243,30 @@ export const products: Product[] = [
   },
 
   // CHOCOLATES ADDED - CHECK NOW
-  // {
-  //   id: '34',
-  //   name: 'Royal Dry Fruit Delight (Square Shape)',
-  //   price: 65,
-  //   image: choco1Image,
-  //   description: 'A masterpiece of luxury — rich, dark chocolate infused with the wholesome crunch of almonds, cashews, pumpkin seeds, and the natural sweetness of dates and apricots. Every square is a royal blend of health and indulgence, perfectly balanced for those who crave both energy and elegance.',
-  //   category: 'chocolates'
-  // },
-  // {
-  //   id: '35',
-  //   name: 'Heart of Bliss (Heart Shape)',
-  //   price: 65,
-  //   image: choco2Image,
-  //   description: 'A bite straight from the heart — smooth, melt-in-mouth chocolate filled with the richness of ground almonds and dates, lightly roasted kaju, and a touch of honey essence. Shaped with love, it\'s not just a chocolate — it\'s an emotion crafted for someone special.',
-  //   category: 'chocolates'
-  // },
-  // {
-  //   id: '36',
-  //   name: 'Golden Luxury Delight',
-  //   price: 65,
-  //   image: choco3Image,
-  //   description: 'The ultimate indulgence — a crisp chocolate shell embracing a luscious core of almond paste, roasted cashew bits, and a whole date hidden inside. Wrapped in golden luxury, each bite reveals layers of crunch, cream, and sweetness — a true celebration of taste and texture.',
-  //   category: 'chocolates'
-  // },
+  {
+    id: '34',
+    name: 'Royal Dry Fruit Delight (Square Shape)',
+    price: 65,
+    image: choco1Image,
+    description: 'A masterpiece of luxury — rich, dark chocolate infused with the wholesome crunch of almonds, cashews, pumpkin seeds, and the natural sweetness of dates and apricots. Every square is a royal blend of health and indulgence, perfectly balanced for those who crave both energy and elegance.',
+    category: 'chocolates'
+  },
+  {
+    id: '35',
+    name: 'Heart of Bliss (Heart Shape)',
+    price: 65,
+    image: choco2Image,
+    description: 'A bite straight from the heart — smooth, melt-in-mouth chocolate filled with the richness of ground almonds and dates, lightly roasted kaju, and a touch of honey essence. Shaped with love, it\'s not just a chocolate — it\'s an emotion crafted for someone special.',
+    category: 'chocolates'
+  },
+  {
+    id: '36',
+    name: 'Golden Luxury Delight',
+    price: 65,
+    image: choco3Image,
+    description: 'The ultimate indulgence — a crisp chocolate shell embracing a luscious core of almond paste, roasted cashew bits, and a whole date hidden inside. Wrapped in golden luxury, each bite reveals layers of crunch, cream, and sweetness — a true celebration of taste and texture.',
+    category: 'chocolates'
+  },
 
   // Gift Hampers - Enhanced descriptions
   {
