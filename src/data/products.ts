@@ -41,7 +41,7 @@ import brochure13 from '@/assets/brochure13.jpg';
 import brochure14 from '@/assets/brochure14.jpg';
 import brochure15 from '@/assets/brochure15.jpg';
 import brochure16 from '@/assets/brochure16.jpg';
-import brochure17 from '@/assets/brochure17.jpg';
+import addon1Image from '@/images/addon 1.jpg';
 export const products: Product[] = [
   // Candles - Updated with exact brochure data
   {
@@ -311,7 +311,7 @@ export const products: Product[] = [
     name: 'Festive Celebration Gift Box',
     price: 1000,
     originalPrice: 2000,
-    image: hampersImage,
+    image: addon1Image,
     description: 'A festive 1kg gift box with 10 rich dry fruit chocolates, 3 elegant daisy flower candles, and 1 beautiful peony flower candle — perfect for gifting and celebrations. ✨',
     category: 'hampers'
   }
