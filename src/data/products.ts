@@ -219,7 +219,11 @@ export const products: Product[] = [
     price: 65,
     image: choco1Image,
     description: 'A masterpiece of luxury — rich, dark chocolate infused with the wholesome crunch of almonds, cashews, pumpkin seeds, and the natural sweetness of dates and apricots. Every square is a royal blend of health and indulgence, perfectly balanced for those who crave both energy and elegance.',
-    category: 'chocolates'
+    category: 'chocolates',
+    variants: [
+      { name: 'Set of 4pcs', price: 65 },
+      { name: 'Set of 8pcs', price: 130 }
+    ]
   },
   {
     id: '35',
@@ -227,7 +231,11 @@ export const products: Product[] = [
     price: 65,
     image: choco2Image,
     description: 'A bite straight from the heart — smooth, melt-in-mouth chocolate filled with the richness of ground almonds and dates, lightly roasted kaju, and a touch of honey essence. Shaped with love, it\'s not just a chocolate — it\'s an emotion crafted for someone special.',
-    category: 'chocolates'
+    category: 'chocolates',
+    variants: [
+      { name: 'Set of 4pcs', price: 65 },
+      { name: 'Set of 8pcs', price: 130 }
+    ]
   },
   {
     id: '36',
@@ -235,7 +243,11 @@ export const products: Product[] = [
     price: 65,
     image: choco3Image,
     description: 'The ultimate indulgence — a crisp chocolate shell embracing a luscious core of almond paste, roasted cashew bits, and a whole date hidden inside. Wrapped in golden luxury, each bite reveals layers of crunch, cream, and sweetness — a true celebration of taste and texture.',
-    category: 'chocolates'
+    category: 'chocolates',
+    variants: [
+      { name: 'Set of 4pcs', price: 65 },
+      { name: 'Set of 8pcs', price: 130 }
+    ]
   },
 
   // Gift Hampers - Enhanced descriptions

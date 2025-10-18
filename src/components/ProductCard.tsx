@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Product, useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,10 +12,11 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, addToCartWithVariant } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<string>('');
 
   const shouldShowToggle = useMemo(() => {
     // Always show toggle if there is any description text
@@ -25,7 +28,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       navigate('/auth');
       return;
     }
-    addToCart(product);
+    
+    if (product.variants && product.variants.length > 0) {
+      if (!selectedVariant) {
+        // If no variant selected, use the first variant as default
+        const defaultVariant = product.variants[0];
+        addToCartWithVariant(product, defaultVariant);
+      } else {
+        const variant = product.variants.find(v => `${v.name}-${v.price}` === selectedVariant);
+        if (variant) {
+          addToCartWithVariant(product, variant);
+        }
+      }
+    } else {
+      addToCart(product);
+    }
   };
 
   return (
@@ -56,6 +73,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {isExpanded ? 'Read less' : 'Read more'}
           </button>
         )}
+        {/* Variant Selection */}
+        {product.variants && product.variants.length > 0 && (
+          <div className="mb-3">
+            <Label className="text-sm font-medium text-foreground mb-2 block">
+              Select Quantity:
+            </Label>
+            <RadioGroup
+              value={selectedVariant}
+              onValueChange={setSelectedVariant}
+              className="space-y-2"
+            >
+              {product.variants.map((variant, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem 
+                    value={`${variant.name}-${variant.price}`} 
+                    id={`${product.id}-${index}`}
+                  />
+                  <Label 
+                    htmlFor={`${product.id}-${index}`}
+                    className="text-sm font-medium cursor-pointer flex-1"
+                  >
+                    {variant.name} - ₹{variant.price}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {product.originalPrice && (
