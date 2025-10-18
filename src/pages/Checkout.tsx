@@ -143,7 +143,7 @@ const Checkout = () => {
       }
     } catch {}
 
-    // Fire-and-forget server notification (email + excel)
+    // Send order notification to server (email + excel)
     try {
       const orderId = `UTS-${Date.now()}`;
       const placedAt = new Date().toISOString();
