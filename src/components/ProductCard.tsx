@@ -103,15 +103,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
 
         <div className="flex items-center justify-between">
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-1">
             {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
-                ₹{product.originalPrice.toLocaleString()}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm sm:text-base text-muted-foreground line-through font-medium">
+                  ₹{product.originalPrice.toLocaleString()}
+                </span>
+                <span className="text-xs sm:text-sm bg-red-100 text-red-600 px-2 py-1 rounded-full font-semibold">
+                  Save ₹{(product.originalPrice - product.price).toLocaleString()}
+                </span>
+              </div>
             )}
-            <span className="text-2xl font-bold text-primary">
+            <span className="text-xl sm:text-2xl font-bold text-primary">
               ₹{product.price.toLocaleString()}
             </span>
+            {product.originalPrice && (
+              <span className="text-xs sm:text-sm text-green-600 font-medium">
+                {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+              </span>
+            )}
           </div>
         </div>
       </CardContent>
