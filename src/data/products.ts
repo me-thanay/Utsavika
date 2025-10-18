@@ -209,38 +209,8 @@ export const products: Product[] = [
   },
 
 // Chocolates - Updated with enhanced descriptions
-  {
-    id: '21',
-    name: 'Artisan Dark Chocolate Box',
-    price: 799,
-    image: chocolatesImage,
-    description: 'Premium handcrafted dark chocolates with premium nuts and dried fruits. Rich, indulgent 200g assorted collection perfect for chocolate connoisseurs.',
-    category: 'chocolates'
-  },
-  {
-    id: '22',
-    name: 'Festive Chocolate Hearts',
-    price: 599,
-    image: chocolatesImage,
-    description: 'Elegant heart-shaped milk chocolates with golden packaging. Made with love for special occasions and romantic celebrations. Pack of 12.',
-    category: 'chocolates'
-  },
-  {
-    id: '23',
-    name: 'Traditional Mithai Chocolates',
-    price: 899,
-    image: chocolatesImage,
-    description: 'Innovative fusion chocolates inspired by traditional Indian sweets. Unique flavors blending heritage with modern craftsmanship in elegant packaging.',
-    category: 'chocolates'
-  },
-  {
-    id: '24',
-    name: 'Premium Truffle Collection',
-    price: 1299,
-    image: chocolatesImage,
-    description: 'Luxury truffles with exotic Indian flavors - saffron, cardamom, and rose. Artisanal craftsmanship in a premium gift box of 16 pieces.',
-    category: 'chocolates'
-  },
+
+
 
   // CHOCOLATES ADDED - CHECK NOW
   {
@@ -269,38 +239,9 @@ export const products: Product[] = [
   },
 
   // Gift Hampers - Enhanced descriptions
-  {
-    id: '25',
-    name: 'Festival Joy Hamper',
-    price: 1899,
-    image: hampersImage,
-    description: 'Complete festive celebration hamper featuring premium candles, artisan chocolates, premium dry fruits, and elegant decorative items. Perfect for all occasions.',
-    category: 'hampers'
-  },
-  {
-    id: '26',
-    name: 'Sweet Celebration Box',
-    price: 1599,
-    image: hampersImage,
-    description: 'Curated collection of premium sweets, luxury chocolates, and festive treats. Beautifully packaged for memorable celebrations and special moments.',
-    category: 'hampers'
-  },
-  {
-    id: '27',
-    name: 'Royal Diwali Hamper',
-    price: 2499,
-    image: hampersImage,
-    description: 'Luxurious Diwali celebration hamper with traditional silver items, premium sweets, scented candles, and exclusive gifts. The ultimate festive experience.',
-    category: 'hampers'
-  },
-  {
-    id: '28',
-    name: 'Family Celebration Pack',
-    price: 1299,
-    image: hampersImage,
-    description: 'Perfect family celebration package with assorted premium treats, decorative candles, and festive decorations. Ideal for creating beautiful memories together.',
-    category: 'hampers'
-  },
+
+
+
 
   // Customized Gifts - Enhanced descriptions
   {
