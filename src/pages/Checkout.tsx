@@ -144,38 +144,43 @@ const Checkout = () => {
     } catch {}
 
     // Send order notification to server (email + excel)
-    try {
-      const orderId = `UTS-${Date.now()}`;
-      const placedAt = new Date().toISOString();
-      const endpoint = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/notify-order` : "/notify-order";
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          placedAt,
-          customer: {
-            fullName: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
-            pincode: formData.pincode,
-            landmark: formData.landmark,
-          },
-          items: cartItems.map(ci => ({ name: ci.name, price: ci.price, quantity: ci.quantity })),
-          totals: { totalAmount, itemCount: totalItems },
-        })
-      });
-      if (!resp.ok) {
+    const sendOrderNotification = async () => {
+      try {
+        const orderId = `UTS-${Date.now()}`;
+        const placedAt = new Date().toISOString();
+        const endpoint = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/notify-order` : "/notify-order";
+        const resp = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId,
+            placedAt,
+            customer: {
+              fullName: formData.fullName,
+              email: formData.email,
+              phone: formData.phone,
+              address: formData.address,
+              pincode: formData.pincode,
+              landmark: formData.landmark,
+            },
+            items: cartItems.map(ci => ({ name: ci.name, price: ci.price, quantity: ci.quantity })),
+            totals: { totalAmount, itemCount: totalItems },
+          })
+        });
+        if (!resp.ok) {
+          // eslint-disable-next-line no-console
+          console.error('notify-order failed', resp.status);
+          toast({ title: 'Order placed, but email failed', description: 'We could not send an email notification.', variant: 'destructive' });
+        }
+      } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('notify-order failed', resp.status);
-        toast({ title: 'Order placed, but email failed', description: 'We could not send an email notification.', variant: 'destructive' });
+        console.error('notify-order error', e);
+        toast({ title: 'Order placed, but email failed', description: 'Please verify your email settings.', variant: 'destructive' });
       }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('notify-order error', e);
-      toast({ title: 'Order placed, but email failed', description: 'Please verify your email settings.', variant: 'destructive' });
-    }
+    };
+    
+    // Call the async function
+    sendOrderNotification();
 
     // Clear cart after successful order
     clearCart();
