@@ -241,7 +241,7 @@ export const products: Product[] = [
     category: 'chocolates'
   },
 
-  // Premium Chocolate Collection
+  // Premium Chocolate Collection - Updated
   {
     id: '34',
     name: 'Royal Dry Fruit Delight (Square Shape)',
