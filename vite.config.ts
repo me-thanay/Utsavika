@@ -24,6 +24,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         // keep path as /admin/* so it hits the server's /admin/* routes
       },
+      "/notify-order": {
+        target: "http://localhost:8787",
+        changeOrigin: true,
+        // keep path as /notify-order so it hits the server's /notify-order route
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
