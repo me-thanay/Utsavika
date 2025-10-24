@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Sparkles, Flame, Heart, Gift, User, LogOut } from 'lucide-react';
+import { ShoppingCart, Sparkles, Flame, Heart, Gift, User, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 const Navbar = () => {
   const location = useLocation();
   const { getCartCount } = useCart();
   const { user, signOut } = useAuth();
+  const { isAdmin, adminLogout } = useAdminAuth();
   const cartCount = getCartCount();
 
   const isActive = (path: string) => {
@@ -90,6 +92,16 @@ const Navbar = () => {
                 )}
               </Button>
             </Link>
+            
+            {/* Admin Button - Only show when not logged in as regular user */}
+            {!user && (
+              <Link to="/admin/login">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Shield className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Button>
+              </Link>
+            )}
             
             {user ? (
               <div className="flex items-center space-x-2">
