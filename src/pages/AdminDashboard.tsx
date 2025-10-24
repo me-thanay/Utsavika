@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { LogOut, Package, User, MapPin, Calendar, DollarSign, Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getApiUrl } from "@/lib/api";
 
 interface OrderItem {
   id: number;
@@ -46,7 +47,7 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/admin/orders");
+      const response = await fetch(getApiUrl("/admin/orders"));
       if (!response.ok) {
         throw new Error("Failed to fetch orders");
       }
@@ -66,7 +67,7 @@ const AdminDashboard = () => {
 
   const updateOrderStatus = async (orderId: number, newStatus: string) => {
     try {
-      const response = await fetch(`/admin/orders/${orderId}/status`, {
+      const response = await fetch(getApiUrl(`/admin/orders/${orderId}/status`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +100,7 @@ const AdminDashboard = () => {
 
   const deleteOrder = async (orderId: number) => {
     try {
-      const response = await fetch(`/admin/orders/${orderId}`, {
+      const response = await fetch(getApiUrl(`/admin/orders/${orderId}`), {
         method: "DELETE",
       });
 
