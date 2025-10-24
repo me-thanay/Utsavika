@@ -19,6 +19,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         // keep path as /local/* so it hits the server's /local/* routes
       },
+      "/admin": {
+        target: "http://localhost:8787",
+        changeOrigin: true,
+        // keep path as /admin/* so it hits the server's /admin/* routes
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
