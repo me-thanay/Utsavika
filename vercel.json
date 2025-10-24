@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://utsavika-api.onrender.com/api/$1" }
+  ]
+}
+
+
